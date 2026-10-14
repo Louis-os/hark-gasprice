@@ -183,29 +183,34 @@ async function loadPrediction(ctx, provinceCode) {
   return { up, minV, maxV, nextMD };
 }
 
-// 兜底：中石化接口缺失的油号（如河南 98#），用汽油价格网 (m.qiyoujiage.com) 的数据补齐
+// 兜底：中石化接口缺失的油号（如河南 98#），用汽油价格网 (qiyoujiage.com) 的数据补齐
+// Hark 是 iOS 应用，可能拦截 http 明文请求，因此 https 优先、http 兜底，并校验内容
 async function loadQyjFallback(ctx, provinceCode) {
   const slug = QYJ_SLUGS[provinceCode];
   if (!slug) return null;
-  try {
-    const resp = await ctx.http.get(`${QYJ_BASE}/${slug}.shtml`, {
-      headers: { 'User-Agent': COMMON_HEADERS['User-Agent'], 'Referer': `${QYJ_BASE}/` },
-      timeout: 10000
-    });
-    const html = await resp.text();
-    // 先剥掉所有 HTML 标签再按"名称+价格"文本配对，不依赖具体标签结构，抗页面改版
-    const text = String(html).replace(/<[^>]*>/g, '\n').replace(/&nbsp;/g, ' ');
-    const getPrice = (label) => {
-      const m = text.match(new RegExp('(^|[^\\d])' + label + '\\s*([\\d]+\\.[\\d]+)'));
-      return m ? parseFloat(m[2]) : NaN;
-    };
-    return {
-      p92: getPrice('92号汽油'),
-      p95: getPrice('95号汽油'),
-      p98: getPrice('98号汽油'),
-      diesel: getPrice('0号柴油'),
-    };
-  } catch (_) { return null; }
+  const headers = { 'User-Agent': COMMON_HEADERS['User-Agent'], 'Referer': 'https://m.qiyoujiage.com/' };
+  for (const base of ['https://m.qiyoujiage.com', 'http://m.qiyoujiage.com']) {
+    try {
+      const resp = await ctx.http.get(`${base}/${slug}.shtml`, { headers, timeout: 10000 });
+      if (resp && resp.status && resp.status !== 200) continue;
+      const html = await resp.text();
+      if (!html || !html.includes('98号汽油')) continue;
+      // 先剥掉所有 HTML 标签再按"名称+价格"文本配对，不依赖具体标签结构，抗页面改版
+      const text = String(html).replace(/<[^>]*>/g, '\n').replace(/&nbsp;/g, ' ');
+      const getPrice = (label) => {
+        const m = text.match(new RegExp('(^|[^\\d])' + label + '\\s*([\\d]+\\.[\\d]+)'));
+        return m ? parseFloat(m[2]) : NaN;
+      };
+      const out = {
+        p92: getPrice('92号汽油'),
+        p95: getPrice('95号汽油'),
+        p98: getPrice('98号汽油'),
+        diesel: getPrice('0号柴油'),
+      };
+      if (Number.isFinite(out.p98)) return out;
+    } catch (_) {}
+  }
+  return null;
 }
 
 function resolveAreaIndex(current, cityName, explicitIndex) {
