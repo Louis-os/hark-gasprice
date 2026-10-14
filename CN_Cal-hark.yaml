@@ -3,7 +3,7 @@ description: 双周/月历，与油价小组件统一的渐变玻璃风格，只
 scriptings:
   - generic:
       name: 日历-Hark
-      script_url: https://raw.githubusercontent.com/Louis-os/hark-gasprice/main/CN_Cal-hark.js?v=1
+      script_url: https://raw.githubusercontent.com/Louis-os/hark-gasprice/main/CN_Cal-hark.js?v=2
       timeout: 30
 widgets:
   - name: 日历-Hark
