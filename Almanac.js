@@ -219,21 +219,13 @@ export default async function(ctx) {
     return lines;
   };
 
-  // 给颜色加透明度（支持 {light,dark} 对象和字符串）
-  const withAlpha = (c, a) => {
-    if (typeof c === 'string') return c + a;
-    if (c && typeof c === 'object') return { light: c.light + a, dark: c.dark + a };
-    return c;
-  };
   const createRowFactory = (config) => (raw, icon, color, label, contentColor = C.sub) => {
     if (!raw) return [];
     const lines = splitTextToLines(raw, config.maxW);
     return lines.map((lineStr, idx) => ({
       type: 'stack', direction: 'row', alignItems: 'start', gap: 4,
       children: [
-        { type: 'stack', direction: 'row', alignItems: 'center', gap: 2,
-          ...(idx === 0 ? { width: config.lw, padding: [3, 7, 3, 7], borderRadius: 7, backgroundColor: withAlpha(color, '20') } : { width: config.lw }),
-          children: [
+        { type: 'stack', direction: 'row', alignItems: 'center', gap: 2, width: config.lw, children: [
           mkIcon(idx === 0 ? icon : 'circle.fill', idx === 0 ? color : C.transparent, config.icz),
           mkText(idx === 0 ? label : " ", config.fz, "heavy", idx === 0 ? color : C.transparent)
         ]},
@@ -278,7 +270,7 @@ export default async function(ctx) {
   const mediumConfig = {
     fz: 12,
     icz: 13,
-    lw: 68,
+    lw: 52,
     maxW: 48,
     headerFz: 15,
     topIconFz: 11,
@@ -288,7 +280,7 @@ export default async function(ctx) {
   const largeConfig = {
     fz: 14,
     icz: 15,
-    lw: 76,
+    lw: 60,
     maxW: 38,
     headerFz: 17,
     topIconFz: 12,
