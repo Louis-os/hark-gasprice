@@ -35,6 +35,7 @@ export default async function(ctx) {
     yi:          '#30D158',
     ji:          '#FF453A',
     term:        '#64A8FF',
+    glass:       { light: '#FFFFFFA6', dark: '#FFFFFF1A' },
     transparent: '#00000000'
   };
 
@@ -375,11 +376,18 @@ export default async function(ctx) {
     ...buildRows(rawYi, 'checkmark.circle.fill', C.yi, '宜'),
     ...buildRows(rawJi, 'xmark.circle.fill', C.ji, '忌'),
     ...buildRows(`${chongshaInfo}  |  运势: ${starStr}`, 'shield.lefthalf.filled', C.gold, '冲煞'),
+  ];
+  const countdownRows = [
     ...buildRows(legalStr, 'flag.fill', '#FF6B5E', '法定'),
     ...buildRows(termCountdownStr, 'leaf.arrow.circlepath', C.term, '节气', C.term),
     ...buildRows(folkStr, 'moon.stars.fill', '#FFB340', '民俗'),
     ...buildRows(intlStr, 'globe.asia.australia.fill', '#64A8FF', '国际')
   ];
+  const countdownCard = {
+    type: 'stack', direction: 'column', alignItems: 'start',
+    gap: config.gap, padding: [8, 10, 8, 10], borderRadius: 14,
+    backgroundColor: C.glass, children: countdownRows
+  };
 
   return {
     type: 'widget', padding: isLarge ? 16 : 12, url: 'calshow://',
@@ -406,6 +414,10 @@ export default async function(ctx) {
         mkText(`${obj.gz}(${obj.ani})年 ${obj.cn} ${shichenStr}${obj.term ? ` · 今日${obj.term}` : ""}`, isLarge ? 14 : 13, "bold", C.gold),
         ...yiJiRows
       ]},
+
+      mkSpacer(isLarge ? 8 : 6),
+
+      countdownCard,
 
       mkSpacer()
     ]
