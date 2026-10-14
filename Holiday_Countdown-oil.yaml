@@ -1,0 +1,23 @@
+name: 节日倒计时（油价配色版）
+description: 公历/农历/浮动节日倒计时，油价小组件同款三段渐变 + 白色玻璃风格
+env_schema:
+  SHOW_HOLIDAY:
+    name: 显示公历节日
+    description: 是否显示公历节日倒计时
+    default_value: 'true'
+  SHOW_TERM:
+    name: 显示节气
+    description: 是否显示节气倒计时
+    default_value: 'true'
+  SHOW_TRADITIONAL:
+    name: 显示农历节日
+    description: 是否显示农历及浮动节日倒计时
+    default_value: 'true'
+scriptings:
+  - generic:
+      name: 节日倒计时-油价版
+      script_url: https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/Holiday_Countdown-oil.js?v=20261014a
+      timeout: 30
+widgets:
+  - name: 节日倒计时-油价版
+    script_name: 节日倒计时-油价版
