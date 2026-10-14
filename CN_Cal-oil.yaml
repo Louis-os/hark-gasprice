@@ -1,10 +1,10 @@
-name: 双周日历（油价配色版）
+name: 日历
 description: 双周日历，法定节假日红色、调休上班日蓝点、今日黄历（建除十二神宜忌），油价小组件同款三段渐变 + 白色玻璃风格
 scriptings:
   - generic:
-      name: 双周日历-油价版
+      name: 日历
       script_url: https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/CN_Cal-v2.js?v=20261014a
       timeout: 30
 widgets:
-  - name: 双周日历-油价版
-    script_name: 双周日历-油价版
+  - name: 日历
+    script_name: 日历
