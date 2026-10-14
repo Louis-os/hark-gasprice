@@ -71,7 +71,7 @@ env_schema:
     default_value: ''
   REFRESH_HOURS:
     name: 刷新间隔（小时）
-    description: 范围 0.5 ~ 720（小时），168 = 一周
+    description: 范围 0.5 ~ 720（小时），360 = 半月
     default_value: '0.5'
   SUBSCRIPTION_USER_AGENT:
     name: 自定义 User-Agent
