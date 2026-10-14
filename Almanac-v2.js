@@ -164,6 +164,13 @@ export default async function(ctx) {
       return `${x[0]} ${diff === 0 ? '今天' : diff + '天'}`;
     }).join(' · ');
   };
+  const countdownItems = (list, count) => {
+    const fut = list.filter(x => Math.round((new Date(x[1]).getTime() - todayMs) / 86400000) >= 0);
+    return fut.slice(0, count).map(x => {
+      const diff = Math.round((new Date(x[1]).getTime() - todayMs) / 86400000);
+      return { name: x[0], days: diff === 0 ? '今天' : diff + '天' };
+    });
+  };
   const buildFestivalLists = (yr) => {
     const qingming = Lunar.getTerm(yr, 7);
     const legal = [
@@ -377,16 +384,32 @@ export default async function(ctx) {
     ...buildRows(rawJi, 'xmark.circle.fill', C.ji, '忌'),
     ...buildRows(`${chongshaInfo}  |  运势: ${starStr}`, 'shield.lefthalf.filled', C.gold, '冲煞'),
   ];
-  const countdownRows = [
-    ...buildRows(legalStr, 'flag.fill', '#FF6B5E', '法定'),
-    ...buildRows(termCountdownStr, 'leaf.arrow.circlepath', C.term, '节气', C.term),
-    ...buildRows(folkStr, 'moon.stars.fill', '#FFB340', '民俗'),
-    ...buildRows(intlStr, 'globe.asia.australia.fill', '#64A8FF', '国际')
-  ];
-  const countdownCard = {
+  // 倒计时：油价式 2x2 玻璃方块，每类一个方块，里面一节日一行
+  const catCard = (icon, label, color, items) => ({
     type: 'stack', direction: 'column', alignItems: 'start',
-    gap: config.gap, padding: [8, 10, 8, 10], borderRadius: 14,
-    backgroundColor: C.glass, children: countdownRows
+    flex: 1, gap: 3, padding: [8, 10, 8, 10], borderRadius: 14,
+    backgroundColor: C.glass,
+    children: [
+      mkRow([mkIcon(icon, color, 11), mkText(label, 11, 'bold', color)], 4),
+      ...items.map(it => mkText(`${it.name}  ${it.days}`, isLarge ? 11 : 10, 'medium', C.sub, { maxLines: 1 }))
+    ]
+  });
+  const termItems = upcomingTerms.slice(0, festCount).map(s => {
+    const parts = s.split(' ');
+    return { name: parts[0], days: parts.slice(1).join(' ') };
+  });
+  const countdownGrid = {
+    type: 'stack', direction: 'column', gap: 6,
+    children: [
+      mkRow([
+        catCard('flag.fill', '法定', '#FF6B5E', countdownItems(festThis.legal.concat(festNext.legal), festCount)),
+        catCard('leaf.arrow.circlepath', '节气', C.term, termItems)
+      ], 6),
+      mkRow([
+        catCard('moon.stars.fill', '民俗', '#FFB340', countdownItems(festThis.folk.concat(festNext.folk), festCount)),
+        catCard('globe.asia.australia.fill', '国际', '#64A8FF', countdownItems(festThis.intl.concat(festNext.intl), festCount))
+      ], 6)
+    ]
   };
 
   return {
@@ -417,7 +440,7 @@ export default async function(ctx) {
 
       mkSpacer(isLarge ? 8 : 6),
 
-      countdownCard,
+      countdownGrid,
 
       mkSpacer()
     ]
