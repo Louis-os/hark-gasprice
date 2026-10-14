@@ -162,8 +162,8 @@ export default async function(ctx){
     else if(type==='off')numColor="#FF453A";
     else if(other||weekend)numColor="#3C3C4399";
     var cell={
-      type:"stack",direction:"column",alignItems:"center",
-      flex:1,gap:1,padding:[2,2,2,2],borderRadius:8,
+      type:"stack",direction:"column",alignItems:"center",justifyContent:"center",
+      flex:1,gap:1,padding:[4,2,4,2],borderRadius:8,
       backgroundColor:today?"#FFB34066":"#FFFFFFA6",
       children:[
         t(String(dt.getDate()),15,today?"bold":"medium",numColor),
