@@ -486,15 +486,15 @@ function status(s) {
 // 视觉：iOS 液态玻璃
 // ---------------------------------------------------------------------------
 
-const PALETTE = ['#FFB340', '#FF6B5E', '#64A8FF', '#30D158'];
+const PALETTE = ['#BF5AF2', '#0A84FF', '#30D158', '#FF9F0A'];
 
 const C = {
   text: { light: '#000000', dark: '#FFFFFF' },
   dim:  { light: '#3C3C4399', dark: '#EBEBF599' },
   glass: { light: '#FFFFFFA6', dark: '#FFFFFF1A' },
-  accent: '#FFB340',
+  accent: '#BF5AF2',
   ok: '#30D158',
-  warn: '#FFB340',
+  warn: '#FF9F0A',
   fail: '#FF453A',
 };
 
