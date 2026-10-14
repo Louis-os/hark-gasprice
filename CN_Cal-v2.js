@@ -135,7 +135,7 @@ function dayType(d){
 
 // ── DSL 帮助函数（Egern） ──────────────────────────
 function t(text,sz,wt,color,extra){
-  var el={type:"text",text:String(text),font:{size:sz,weight:wt||"regular"},textColor:color||"#000000"};
+  var el={type:"text",text:String(text),font:{size:sz,weight:wt||"regular"},textColor:color||{light:"#000000",dark:"#FFFFFF"}};
   if(extra)for(var k in extra)el[k]=extra[k];
   return el;
 }
@@ -157,14 +157,14 @@ export default async function(ctx){
   function dateCell(dt){
     var today=isToday(dt), type=dayType(dt);
     var wd=dt.getDay(), weekend=(wd===0||wd===6), other=(dt.getMonth()!==m);
-    var numColor="#000000";
+    var numColor={light:"#000000",dark:"#FFFFFF"};
     if(today)numColor="#FFB340";
     else if(type==='off')numColor="#FF453A";
-    else if(other||weekend)numColor="#3C3C4399";
+    else if(other||weekend)numColor={light:"#3C3C4399",dark:"#EBEBF599"};
     var cell={
       type:"stack",direction:"column",alignItems:"center",justifyContent:"center",
       flex:1,gap:1,padding:[4,2,4,2],borderRadius:8,
-      backgroundColor:today?"#FFB34066":"#FFFFFFA6",
+      backgroundColor:today?{light:"#FFB34066",dark:"#FFB34044"}:{light:"#FFFFFFA6",dark:"#FFFFFF1A"},
       children:[
         t(String(dt.getDate()),15,today?"bold":"medium",numColor),
         {type:"stack",width:3,height:3,borderRadius:1.5,
@@ -192,28 +192,28 @@ export default async function(ctx){
 
   // 星期头
   var weekHeader=row(["日","一","二","三","四","五","六"].map(function(x){
-    return{type:"stack",flex:1,alignItems:"center",justifyContent:"center",children:[t(x,11,"medium","#3C3C4399")]};
+    return{type:"stack",flex:1,alignItems:"center",justifyContent:"center",children:[t(x,11,"medium",{light:"#3C3C4399",dark:"#EBEBF599"})]};
   }),{gap:4});
 
   // 头部
   var header=row([
     ic("calendar",16,"#FFB340"),
-    t((m+1)+"月",17,"bold","#000000"),
+    t((m+1)+"月",17,"bold",{light:"#000000",dark:"#FFFFFF"}),
     sp(),
-    t(String(y),13,"medium","#3C3C4399")
+    t(String(y),13,"medium",{light:"#3C3C4399",dark:"#EBEBF599"})
   ],{gap:6});
 
   // 黄历
   var jc=jianchu(now), yiji=GOD_YIJI[jc.god];
   var footKids=[
-    t("黄历",10,"medium","#3C3C4399"),
-    t(lunarDayStr(now),10,"medium","#000000"),
+    t("黄历",10,"medium",{light:"#3C3C4399",dark:"#EBEBF599"}),
+    t(lunarDayStr(now),10,"medium",{light:"#000000",dark:"#FFFFFF"}),
     t(GODS[jc.god]+"日",10,"bold",jc.good?"#FFB340":"#FF453A"),
     sp(),
-    t("宜 "+yiji.yi,10,"medium","#000000")
+    t("宜 "+yiji.yi,10,"medium",{light:"#000000",dark:"#FFFFFF"})
   ];
-  if(yiji.ji)footKids.push(t("忌 "+yiji.ji,10,"medium","#3C3C4399"));
-  var footer=row(footKids,{gap:6,padding:[9,12,9,12],borderRadius:14,backgroundColor:"#FFFFFFA6"});
+  if(yiji.ji)footKids.push(t("忌 "+yiji.ji,10,"medium",{light:"#3C3C4399",dark:"#EBEBF599"}));
+  var footer=row(footKids,{gap:6,padding:[9,12,9,12],borderRadius:14,backgroundColor:{light:"#FFFFFFA6",dark:"#FFFFFF1A"}});
 
   return{
     type:"widget",
@@ -221,7 +221,7 @@ export default async function(ctx){
     borderRadius:22,
     backgroundGradient:{
       type:"linear",
-      colors:["#FFF6EA","#F4F0FF","#EEF6FF"],
+      colors:[{light:"#FFF6EA",dark:"#2A1708"},{light:"#F4F0FF",dark:"#140F26"},{light:"#EEF6FF",dark:"#07121F"}],
       stops:[0,0.5,1],
       startPoint:{x:0,y:0},
       endPoint:{x:1,y:1}

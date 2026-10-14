@@ -3,7 +3,7 @@ description: 双周日历，法定节假日红色、调休上班日蓝点、今�
 scriptings:
   - generic:
       name: 日历
-      script_url: https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/CN_Cal-v2.js?v=20261014a
+      script_url: https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/CN_Cal-v2.js?v=20261014b
       timeout: 30
 widgets:
   - name: 日历

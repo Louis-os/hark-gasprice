@@ -250,29 +250,29 @@ export default async function(ctx) {
     const getCapsuleColor = (days) => {
       if (days === 0) {
         return {
-          bg: "#FF453A22",
-          border: "#FF453A66",
+          bg: {light:"#FF453A22",dark:"#FF453A33"},
+          border: {light:"#FF453A66",dark:"#FF453A88"},
           text: "#FF453A"
         };
       }
       if (days <= CONFIG.urgentDays) {
         return {
-          bg: "#FF6B5E22",
-          border: "#FF6B5E66",
+          bg: {light:"#FF6B5E22",dark:"#FF6B5E33"},
+          border: {light:"#FF6B5E66",dark:"#FF6B5E88"},
           text: "#FF6B5E"
         };
       }
       if (days <= CONFIG.warningDays) {
         return {
-          bg: "#FFB34022",
-          border: "#FFB34066",
-          text: "#B7791F"
+          bg: {light:"#FFB34022",dark:"#FFB34033"},
+          border: {light:"#FFB34066",dark:"#FFB34088"},
+          text: {light:"#B7791F",dark:"#FFB340"}
         };
       }
       return {
-        bg: "#30D1581E",
-        border: "#30D15855",
-        text: "#1E9E62"
+        bg: {light:"#30D1581E",dark:"#30D1582E"},
+        border: {light:"#30D15855",dark:"#30D15877"},
+        text: {light:"#1E9E62",dark:"#30D158"}
       };
     };
 
@@ -368,7 +368,7 @@ export default async function(ctx) {
       if (!showL) filtered = filtered.filter(c => c.type !== 'lunar' && c.type !== 'floating');
 
       return { type: 'widget', padding: CONFIG.padding,
-        backgroundGradient: { type: "linear", colors: ["#FFF6EA","#F4F0FF","#EEF6FF"], stops: [0,0.5,1], startPoint: {x:0,y:0}, endPoint: {x:1,y:1} },
+        backgroundGradient: { type: "linear", colors: [{light:"#FFF6EA",dark:"#2A1708"},{light:"#F4F0FF",dark:"#140F26"},{light:"#EEF6FF",dark:"#07121F"}], stops: [0,0.5,1], startPoint: {x:0,y:0}, endPoint: {x:1,y:1} },
         children: renderGrid(filtered, size.cols, size.font) };
     };
 
@@ -408,7 +408,7 @@ export default async function(ctx) {
       }
       return {
         type: 'widget', padding: 10, gap: 8,
-        backgroundGradient: { type: "linear", colors: ["#FFF6EA","#F4F0FF","#EEF6FF"], stops: [0,0.5,1], startPoint: {x:0,y:0}, endPoint: {x:1,y:1} },
+        backgroundGradient: { type: "linear", colors: [{light:"#FFF6EA",dark:"#2A1708"},{light:"#F4F0FF",dark:"#140F26"},{light:"#EEF6FF",dark:"#07121F"}], stops: [0,0.5,1], startPoint: {x:0,y:0}, endPoint: {x:1,y:1} },
         refreshAfter: new Date(Date.now() + 60*60*1000).toISOString(),
         children: rows
       };
