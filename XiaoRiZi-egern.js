@@ -136,9 +136,14 @@ function top3(all, today){
   return take.slice(0,3);
 }
 
+function alphaC(c, a){
+  if(typeof c==="string")return c+a;
+  return {light:c.light+a, dark:c.dark+a};
+}
+
 // ── DSL 帮助函数 ──────────────────────────────────────
 function t(text, sz, wt, color, extra){
-  var el={type:"text",text:String(text),font:{size:sz,weight:wt||"regular"},textColor:color||"#F5EFE4"};
+  var el={type:"text",text:String(text),font:{size:sz,weight:wt||"regular"},textColor:color||{light:"#2B2118",dark:"#F5EFE4"}};
   if(extra)for(var k in extra)el[k]=extra[k];
   return el;
 }
@@ -176,29 +181,29 @@ export default async function(ctx){
 
   // ── 颜色 ───
   var AC={
-    legal:"#FF7A7A",   // 珊瑚红
-    term :"#50E3A4",   // 薄荷绿
+    legal:{light:"#FF453A",dark:"#FF7A7A"},   // 珊瑚红
+    term :{light:"#1E9E62",dark:"#50E3A4"},   // 薄荷绿
     folk :"#FFB340",   // 暖金
-    intl :"#79BBFF",   // 天蓝
-    dim  :"rgba(245,239,228,0.6)",
-    faint:"rgba(245,239,228,0.3)",
-    sep  :"rgba(245,239,228,0.12)",
+    intl :{light:"#0A84FF",dark:"#79BBFF"},   // 天蓝
+    dim  :"{light:"rgba(43,33,24,0.6)",dark:"rgba(245,239,228,0.6)"}",
+    faint:"{light:"rgba(43,33,24,0.3)",dark:"rgba(245,239,228,0.3)"}",
+    sep  :"{light:"rgba(43,33,24,0.12)",dark:"rgba(245,239,228,0.12)"}",
   };
 
   // ── 节日胶囊 ───
   // 格式：[名称]  [X天] 用竖分隔线区分
   function chip(name, days, accent){
     var today0=days===0;
-    var nameColor=today0?"rgba(245,239,228,0.95)":AC.dim;
+    var nameColor=today0?"{light:"rgba(43,33,24,0.95)",dark:"rgba(245,239,228,0.95)"}":AC.dim;
     var daysLabel=today0?"今天":days+"天";
-    var daysColor=today0?accent:"rgba(245,239,228,0.4)";
+    var daysColor=today0?accent:"{light:"rgba(43,33,24,0.4)",dark:"rgba(245,239,228,0.4)"}";
     return row([
       t(name, 10, today0?"semibold":"regular", nameColor),
       t(daysLabel, 10, today0?"bold":"regular", daysColor, {fontFamily:"Menlo"}),
     ],{
       gap:3,
       padding:[3,7,3,7],
-      backgroundColor: today0?(accent+"2E"):"rgba(245,239,228,0.06)",
+      backgroundColor: today0?alphaC(accent,"2E"):"{light:"rgba(43,33,24,0.06)",dark:"rgba(245,239,228,0.06)"}",
       borderRadius:7,
     });
   }
@@ -208,7 +213,7 @@ export default async function(ctx){
     return row([
       ic(sfSym, 10, accent),
       t(label, 10, "semibold", accent),
-    ],{gap:3, padding:[3,7,3,7], backgroundColor:accent+"20", borderRadius:7});
+    ],{gap:3, padding:[3,7,3,7], backgroundColor:alphaC(accent,"20"), borderRadius:7});
   }
 
   // ── 整行（标签 + 三个胶囊）───
@@ -230,7 +235,7 @@ export default async function(ctx){
   var astro     = L ? L.astro : "";
 
   var headerLeft = col([
-    t(lunarDay, 26, "bold", "#F5EFE4"),
+    t(lunarDay, 26, "bold", {light:"#2B2118",dark:"#F5EFE4"}),
     row([
       t(lunarMon, 9, "regular", AC.dim),
       t("·", 9, "regular", AC.faint),
@@ -241,10 +246,10 @@ export default async function(ctx){
   var headerRight = col([
     row([
       ic("calendar", 12, "#FFB340"),
-      t((now.getMonth()+1)+"月"+now.getDate()+"日", 15, "semibold", "#F5EFE4"),
+      t((now.getMonth()+1)+"月"+now.getDate()+"日", 15, "semibold", {light:"#2B2118",dark:"#F5EFE4"}),
     ],{gap:3}),
-    t("星期"+wkCN+"   "+astro, 10, "regular", "rgba(245,239,228,0.7)"),
-    t(gzLine, 9, "regular", "rgba(245,239,228,0.4)"),
+    t("星期"+wkCN+"   "+astro, 10, "regular", "{light:"rgba(43,33,24,0.7)",dark:"rgba(245,239,228,0.7)"}"),
+    t(gzLine, 9, "regular", "{light:"rgba(43,33,24,0.4)",dark:"rgba(245,239,228,0.4)"}"),
   ],{gap:2, alignItems:"end"});
 
   var header = row([headerLeft, sp(), headerRight],{alignItems:"center"});
@@ -259,11 +264,8 @@ export default async function(ctx){
     padding:[10,11,9,11],
     gap:0,
     backgroundGradient:{
-    type:"linear",
-    colors:["#2A2A2C","#17171A"],
-    stops:[0,1],
-    startPoint:{x:0,y:0},
-    endPoint:{x:1,y:1},
+    light:{type:"linear",colors:["#F6F1E8","#EADFC9"],stops:[0,1],startPoint:{x:0,y:0},endPoint:{x:1,y:1}},
+    dark:{type:"linear",colors:["#2A2A2C","#17171A"],stops:[0,1],startPoint:{x:0,y:0},endPoint:{x:1,y:1}},
     },
     children:[
       header,
