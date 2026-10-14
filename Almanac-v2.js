@@ -433,7 +433,8 @@ export default async function(ctx) {
 
       mkSpacer(isLarge ? 12 : 6),
 
-      { type: 'stack', direction: 'column', alignItems: 'start', gap: config.gap, children: [
+      { type: 'stack', direction: 'column', alignItems: 'start', gap: config.gap,
+        padding: [8, 10, 8, 10], borderRadius: 14, backgroundColor: C.glass, children: [
         mkText(`${obj.gz}(${obj.ani})年 ${obj.cn} ${shichenStr}${obj.term ? ` · 今日${obj.term}` : ""}`, isLarge ? 14 : 13, "bold", C.gold),
         ...yiJiRows
       ]},
