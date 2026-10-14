@@ -385,15 +385,31 @@ export default async function(ctx) {
     ...buildRows(`${chongshaInfo}  |  运势: ${starStr}`, 'shield.lefthalf.filled', C.gold, '冲煞'),
   ];
   // 倒计时：油价式 2x2 玻璃方块，每类一个方块，里面一节日一行
-  const catCard = (icon, label, color, items) => ({
-    type: 'stack', direction: 'column', alignItems: 'start',
-    flex: 1, gap: 3, padding: [8, 10, 8, 10], borderRadius: 14,
-    backgroundColor: C.glass,
-    children: [
-      mkRow([mkIcon(icon, color, 11), mkText(label, 11, 'bold', color)], 4),
-      ...items.map(it => mkText(`${it.name}  ${it.days}`, isLarge ? 11 : 10, 'medium', C.sub, { maxLines: 1 }))
-    ]
-  });
+  const catCard = (icon, label, color, items) => {
+    // 每行并排两个节日，每个节日是独立元素，绝不从中间断开
+    const pairRows = [];
+    for (let i = 0; i < items.length; i += 2) {
+      const a = items[i];
+      const b = items[i + 1];
+      const row = [
+        mkText(`${a.name} ${a.days}`, isLarge ? 11 : 10, 'medium', C.sub, { maxLines: 1, minScale: 0.8 }),
+      ];
+      if (b) {
+        row.push(mkText('·', isLarge ? 11 : 10, 'medium', C.sub, { maxLines: 1 }));
+        row.push(mkText(`${b.name} ${b.days}`, isLarge ? 11 : 10, 'medium', C.sub, { maxLines: 1, minScale: 0.8 }));
+      }
+      pairRows.push(mkRow(row, 4));
+    }
+    return {
+      type: 'stack', direction: 'column', alignItems: 'start',
+      flex: 1, gap: 3, padding: [8, 10, 8, 10], borderRadius: 14,
+      backgroundColor: C.glass,
+      children: [
+        mkRow([mkIcon(icon, color, 11), mkText(label, 11, 'bold', color)], 4),
+        ...pairRows
+      ]
+    };
+  };
   const termItems = upcomingTerms.slice(0, festCount).map(s => {
     const parts = s.split(' ');
     return { name: parts[0], days: parts.slice(1).join(' ') };
