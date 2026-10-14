@@ -196,14 +196,6 @@ export default async function(ctx) {
     ].sort((a, b) => new Date(a[1]) - new Date(b[1]));
     return { legal, folk, intl };
   };
-  const festThis = buildFestivalLists(Y);
-  const festNext = buildFestivalLists(Y + 1);
-  const festCount = isLarge ? 3 : 2;
-  const legalStr = countdownStr(festThis.legal.concat(festNext.legal), festCount);
-  const folkStr = countdownStr(festThis.folk.concat(festNext.folk), festCount);
-  const intlStr = countdownStr(festThis.intl.concat(festNext.intl), festCount);
-  // 节气倒计时（黄历原有节气行升级为带天数版，避免重复）
-  const termCountdownStr = upcomingTerms.slice(0, festCount).join(' · ');
 
   // ── 未来节气 ────────────────────────────────────────────────────────────
   const todayMs  = new Date(Y, M - 1, D).getTime();
@@ -224,6 +216,15 @@ export default async function(ctx) {
       break;
     }
   }
+
+  // ── 四类倒计时字符串（必须在 todayMs / upcomingTerms 定义之后） ──
+  const festThis = buildFestivalLists(Y);
+  const festNext = buildFestivalLists(Y + 1);
+  const festCount = isLarge ? 3 : 2;
+  const legalStr = countdownStr(festThis.legal.concat(festNext.legal), festCount);
+  const folkStr = countdownStr(festThis.folk.concat(festNext.folk), festCount);
+  const intlStr = countdownStr(festThis.intl.concat(festNext.intl), festCount);
+  const termCountdownStr = upcomingTerms.slice(0, festCount).join(' · ');
 
   // ── 农历解析 & 时辰 ───────────────────────────────────────────────────────
   const obj        = Lunar.parse(Y, M, D);
