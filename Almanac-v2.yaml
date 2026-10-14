@@ -16,7 +16,7 @@ env_schema:
 scriptings:
   - generic:
       name: 黄历-油价版
-      script_url: https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/Almanac-v2.js?v=20261014g
+      script_url: https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/Almanac-v2.js?v=20261014h
       timeout: 30
 widgets:
   - name: 黄历-油价版

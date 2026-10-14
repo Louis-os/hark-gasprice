@@ -228,7 +228,7 @@ export default async function(ctx) {
   // ── 四类倒计时字符串（必须在 todayMs / upcomingTerms 定义之后） ──
   const festThis = buildFestivalLists(Y);
   const festNext = buildFestivalLists(Y + 1);
-  const festCount = isLarge ? 5 : 4;
+  const festCount = isLarge ? 4 : 2;
   const legalStr = countdownStr(festThis.legal.concat(festNext.legal), festCount);
   const folkStr = countdownStr(festThis.folk.concat(festNext.folk), festCount);
   const intlStr = countdownStr(festThis.intl.concat(festNext.intl), festCount);
@@ -332,25 +332,25 @@ export default async function(ctx) {
           mkSpacer(),
           { type: 'stack', direction: 'row', alignItems: 'center', gap: 3, children: [
              mkIcon(topIcon, C.gold, 11),
-             mkText(topText, 10, "bold", C.muted, { maxLines: 1, minScale: 0.8 })
+             mkText(topText, 10, "bold", C.muted, { maxLines: 1 })
           ]}
         ], 6),
         mkSpacer(8),
-        mkText(`${obj.gz}(${obj.ani})年 ${obj.cn} ${shichenStr}${obj.term ? ` · 今日${obj.term}` : ""}`, 11, "bold", C.gold, { maxLines: 1, minScale: 0.8 }),
+        mkText(`${obj.gz}(${obj.ani})年 ${obj.cn} ${shichenStr}${obj.term ? ` · 今日${obj.term}` : ""}`, 11, "bold", C.gold, { maxLines: 1 }),
         mkSpacer(8),
-        ...(rawYi ? [mkRow([ mkIcon('checkmark.circle.fill', C.yi, 11), mkText(rawYi.replace(/\s+/g, ' '), 11, "medium", C.sub, { maxLines: 1, minScale: 0.8 }) ], 6)] : []),
+        ...(rawYi ? [mkRow([ mkIcon('checkmark.circle.fill', C.yi, 11), mkText(rawYi.replace(/\s+/g, ' '), 11, "medium", C.sub, { maxLines: 1 }) ], 6)] : []),
         mkSpacer(6),
-        ...(rawJi ? [mkRow([ mkIcon('xmark.circle.fill',     C.ji, 11), mkText(rawJi.replace(/\s+/g, ' '), 11, "medium", C.sub, { maxLines: 1, minScale: 0.8 }) ], 6)] : []),
+        ...(rawJi ? [mkRow([ mkIcon('xmark.circle.fill',     C.ji, 11), mkText(rawJi.replace(/\s+/g, ' '), 11, "medium", C.sub, { maxLines: 1 }) ], 6)] : []),
         mkSpacer(8),
-        mkRow([ mkIcon('shield.lefthalf.filled', C.gold, 11), mkText(chongshaInfo,           10, "medium", C.muted, { maxLines: 1, minScale: 0.8 }) ], 6),
+        mkRow([ mkIcon('shield.lefthalf.filled', C.gold, 11), mkText(chongshaInfo,           10, "medium", C.muted, { maxLines: 1 }) ], 6),
         mkSpacer(6),
         mkRow([ mkIcon('leaf.arrow.circlepath',  C.term, 11), mkText(upcomingTerms.slice(0, 2).join(' · ') || "", 10, "medium", C.term,  { maxLines: 1, minScale: 0.8 }) ], 6),
         mkSpacer(4),
-        mkRow([ mkIcon('flag.fill', '#FF6B5E', 11), mkText(countdownStr(festThis.legal.concat(festNext.legal), 2), 10, "medium", C.sub, { maxLines: 1, minScale: 0.8 }) ], 6),
+        mkRow([ mkIcon('flag.fill', '#FF6B5E', 11), mkText(countdownStr(festThis.legal.concat(festNext.legal), 2), 10, "medium", C.sub, { maxLines: 1 }) ], 6),
         mkSpacer(4),
-        mkRow([ mkIcon('moon.stars.fill', '#FFB340', 11), mkText(countdownStr(festThis.folk.concat(festNext.folk), 2), 10, "medium", C.sub, { maxLines: 1, minScale: 0.8 }) ], 6),
+        mkRow([ mkIcon('moon.stars.fill', '#FFB340', 11), mkText(countdownStr(festThis.folk.concat(festNext.folk), 2), 10, "medium", C.sub, { maxLines: 1 }) ], 6),
         mkSpacer(4),
-        mkRow([ mkIcon('globe.asia.australia.fill', '#64A8FF', 11), mkText(countdownStr(festThis.intl.concat(festNext.intl), 2), 10, "medium", C.sub, { maxLines: 1, minScale: 0.8 }) ], 6)
+        mkRow([ mkIcon('globe.asia.australia.fill', '#64A8FF', 11), mkText(countdownStr(festThis.intl.concat(festNext.intl), 2), 10, "medium", C.sub, { maxLines: 1 }) ], 6)
       ]
     };
   }
@@ -392,11 +392,11 @@ export default async function(ctx) {
       const a = items[i];
       const b = items[i + 1];
       const row = [
-        mkText(`${a.name} ${a.days}`, isLarge ? 11 : 10, 'medium', C.sub, { maxLines: 1, minScale: 0.8 }),
+        mkText(`${a.name} ${a.days}`, isLarge ? 11 : 10, 'medium', C.sub, { maxLines: 1 }),
       ];
       if (b) {
         row.push(mkText('·', isLarge ? 11 : 10, 'medium', C.sub, { maxLines: 1 }));
-        row.push(mkText(`${b.name} ${b.days}`, isLarge ? 11 : 10, 'medium', C.sub, { maxLines: 1, minScale: 0.8 }));
+        row.push(mkText(`${b.name} ${b.days}`, isLarge ? 11 : 10, 'medium', C.sub, { maxLines: 1 }));
       }
       pairRows.push(mkRow(row, 4));
     }
@@ -443,17 +443,26 @@ export default async function(ctx) {
             mkText('·', config.topIconFz, "bold", C.divider, { padding: [0, 2] })
           ] : []),
           mkIcon(topIcon, C.gold, config.topIconFz + 1),
-          mkText(topText, config.topIconFz, "bold", C.muted, { maxLines: 1, minScale: 0.8 })
+          mkText(topText, config.topIconFz, "bold", C.muted, { maxLines: 1 })
         ], isLarge ? 4 : 3)
       ], 6),
 
       mkSpacer(isLarge ? 12 : 6),
 
-      { type: 'stack', direction: 'column', alignItems: 'start', gap: config.gap,
-        padding: [8, 10, 8, 10], borderRadius: 14, backgroundColor: C.glass, children: [
-        mkText(`${obj.gz}(${obj.ani})年 ${obj.cn} ${shichenStr}${obj.term ? ` · 今日${obj.term}` : ""}`, isLarge ? 14 : 13, "bold", C.gold),
-        ...yiJiRows
-      ]},
+      ...(isLarge ? [{
+        type: 'stack', direction: 'column', alignItems: 'start', gap: config.gap,
+        padding: [8, 10, 8, 10], borderRadius: 14, backgroundColor: C.glass,
+        children: [
+          mkText(`${obj.gz}(${obj.ani})年 ${obj.cn} ${shichenStr}${obj.term ? ` · 今日${obj.term}` : ""}`, 14, "bold", C.gold),
+          ...yiJiRows
+        ]
+      }] : [{
+        type: 'stack', direction: 'column', alignItems: 'start', gap: config.gap,
+        children: [
+          mkText(`${obj.gz}(${obj.ani})年 ${obj.cn} ${shichenStr}${obj.term ? ` · 今日${obj.term}` : ""}`, 13, "bold", C.gold),
+          ...yiJiRows
+        ]
+      }]),
 
       mkSpacer(isLarge ? 8 : 6),
 
