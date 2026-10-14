@@ -163,11 +163,11 @@ export default async function(ctx){
     else if(other||weekend)numColor="#3C3C4399";
     var cell={
       type:"stack",direction:"column",alignItems:"center",justifyContent:"center",
-      flex:1,gap:3,padding:[7,2,5,2],borderRadius:14,
+      flex:1,gap:2,padding:[4,2,3,2],borderRadius:12,
       backgroundColor:today?"#FFB34055":"#FFFFFFA6",
       children:[
-        t(String(dt.getDate()),18,today?"bold":"medium",numColor),
-        {type:"stack",width:4,height:4,borderRadius:2,
+        t(String(dt.getDate()),17,today?"bold":"medium",numColor),
+        {type:"stack",width:3,height:3,borderRadius:1.5,
          backgroundColor:type==='work'?"#64A8FF":"#00000000",children:[]}
       ]
     };
@@ -230,11 +230,11 @@ export default async function(ctx){
       header,
       sp(6),
       weekHeader,
-      sp(4),
+      sp(2),
       weeks[0],
-      sp(4),
-      weeks[1],
       sp(6),
+      weeks[1],
+      sp(4),
       footer
     ]
   };
