@@ -221,7 +221,7 @@ export default async function(ctx) {
   // ── 四类倒计时字符串（必须在 todayMs / upcomingTerms 定义之后） ──
   const festThis = buildFestivalLists(Y);
   const festNext = buildFestivalLists(Y + 1);
-  const festCount = isLarge ? 3 : 2;
+  const festCount = isLarge ? 4 : 3;
   const legalStr = countdownStr(festThis.legal.concat(festNext.legal), festCount);
   const folkStr = countdownStr(festThis.folk.concat(festNext.folk), festCount);
   const intlStr = countdownStr(festThis.intl.concat(festNext.intl), festCount);
