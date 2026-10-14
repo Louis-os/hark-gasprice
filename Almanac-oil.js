@@ -127,6 +127,84 @@ export default async function(ctx) {
     }
   };
 
+  // ── 农历转公历（用于农历节日） ───────────────────────────────
+  const lunarYearDays = (y) => {
+    let sum = 348;
+    for (let j = 0x8000; j > 0x8; j >>= 1) sum += (Lunar.info[y - 1900] & j) ? 1 : 0;
+    return sum + lunarLeapDays(y);
+  };
+  const lunarLeapMonth = (y) => Lunar.info[y - 1900] & 0xf;
+  const lunarLeapDays = (y) => lunarLeapMonth(y) ? ((Lunar.info[y - 1900] & 0x10000) ? 30 : 29) : 0;
+  const lunarMonthDays = (y, m) => (Lunar.info[y - 1900] & (0x10000 >> m)) ? 30 : 29;
+  const lunarToSolar = (lY, lM, lD) => {
+    let offset = 0;
+    for (let y = 1900; y < lY; y++) offset += lunarYearDays(y);
+    const leap = lunarLeapMonth(lY);
+    for (let m = 1; m < lM; m++) offset += lunarMonthDays(lY, m);
+    if (leap > 0 && lM > leap) offset += lunarLeapDays(lY);
+    offset += lD - 1;
+    return new Date(Date.UTC(1900, 0, 31) + offset * 86400000);
+  };
+  const fmtD = (dt) => `${dt.getUTCFullYear()}-${String(dt.getUTCMonth() + 1).padStart(2, '0')}-${String(dt.getUTCDate()).padStart(2, '0')}`;
+  const nthWeekday = (year, month, wd, n) => {
+    const first = new Date(year, month - 1, 1).getDay();
+    const day = 1 + ((wd - first + 7) % 7) + (n - 1) * 7;
+    return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  };
+  // ── 四类节日倒计时（万年历并入，黄历已有的日期/农历/干支/宜忌/冲煞不重复） ──
+  const countdownStr = (list, count) => {
+    const fut = list.filter(x => {
+      const diff = Math.round((new Date(x[1]).getTime() - todayMs) / 86400000);
+      return diff >= 0;
+    });
+    const take = fut.slice(0, count);
+    return take.map(x => {
+      const diff = Math.round((new Date(x[1]).getTime() - todayMs) / 86400000);
+      return `${x[0]} ${diff === 0 ? '今天' : diff + '天'}`;
+    }).join(' · ');
+  };
+  const buildFestivalLists = (yr) => {
+    const qingming = Lunar.getTerm(yr, 7);
+    const legal = [
+      ['元旦', `${yr}-01-01`],
+      ['春节', fmtD(lunarToSolar(yr, 1, 1))],
+      ['清明节', `${yr}-04-${String(qingming).padStart(2, '0')}`],
+      ['劳动节', `${yr}-05-01`],
+      ['端午节', fmtD(lunarToSolar(yr, 5, 5))],
+      ['中秋节', fmtD(lunarToSolar(yr, 8, 15))],
+      ['国庆节', `${yr}-10-01`]
+    ].sort((a, b) => new Date(a[1]) - new Date(b[1]));
+    const d12 = lunarMonthDays(yr, 12);
+    const folk = [
+      ['除夕', fmtD(lunarToSolar(yr, 12, d12))],
+      ['元宵节', fmtD(lunarToSolar(yr, 1, 15))],
+      ['龙抬头', fmtD(lunarToSolar(yr, 2, 2))],
+      ['七夕节', fmtD(lunarToSolar(yr, 7, 7))],
+      ['中元节', fmtD(lunarToSolar(yr, 7, 15))],
+      ['重阳节', fmtD(lunarToSolar(yr, 9, 9))],
+      ['腊八节', fmtD(lunarToSolar(yr, 12, 8))],
+      ['小年(北)', fmtD(lunarToSolar(yr, 12, 23))]
+    ].sort((a, b) => new Date(a[1]) - new Date(b[1]));
+    const intl = [
+      ['情人节', `${yr}-02-14`],
+      ['母亲节', nthWeekday(yr, 5, 0, 2)],
+      ['父亲节', nthWeekday(yr, 6, 0, 3)],
+      ['万圣节', `${yr}-10-31`],
+      ['平安夜', `${yr}-12-24`],
+      ['圣诞节', `${yr}-12-25`],
+      ['感恩节', nthWeekday(yr, 11, 4, 4)]
+    ].sort((a, b) => new Date(a[1]) - new Date(b[1]));
+    return { legal, folk, intl };
+  };
+  const festThis = buildFestivalLists(Y);
+  const festNext = buildFestivalLists(Y + 1);
+  const festCount = isLarge ? 3 : 2;
+  const legalStr = countdownStr(festThis.legal.concat(festNext.legal), festCount);
+  const folkStr = countdownStr(festThis.folk.concat(festNext.folk), festCount);
+  const intlStr = countdownStr(festThis.intl.concat(festNext.intl), festCount);
+  // 节气倒计时（黄历原有节气行升级为带天数版，避免重复）
+  const termCountdownStr = upcomingTerms.slice(0, festCount).join(' · ');
+
   // ── 未来节气 ────────────────────────────────────────────────────────────
   const todayMs  = new Date(Y, M - 1, D).getTime();
   const allTerms = [];
@@ -257,7 +335,13 @@ export default async function(ctx) {
         mkSpacer(8),
         mkRow([ mkIcon('shield.lefthalf.filled', C.gold, 11), mkText(chongshaInfo,           10, "medium", C.muted, { maxLines: 1, minScale: 0.8 }) ], 6),
         mkSpacer(6),
-        mkRow([ mkIcon('leaf.arrow.circlepath',  C.term, 11), mkText(upcomingTerms[0] || "", 10, "medium", C.term,  { maxLines: 1, minScale: 0.8 }) ], 6)
+        mkRow([ mkIcon('leaf.arrow.circlepath',  C.term, 11), mkText(upcomingTerms.slice(0, 2).join(' · ') || "", 10, "medium", C.term,  { maxLines: 1, minScale: 0.8 }) ], 6),
+        mkSpacer(4),
+        mkRow([ mkIcon('flag.fill', '#FF6B5E', 11), mkText(countdownStr(festThis.legal.concat(festNext.legal), 2), 10, "medium", C.sub, { maxLines: 1, minScale: 0.8 }) ], 6),
+        mkSpacer(4),
+        mkRow([ mkIcon('moon.stars.fill', '#FFB340', 11), mkText(countdownStr(festThis.folk.concat(festNext.folk), 2), 10, "medium", C.sub, { maxLines: 1, minScale: 0.8 }) ], 6),
+        mkSpacer(4),
+        mkRow([ mkIcon('globe.asia.australia.fill', '#64A8FF', 11), mkText(countdownStr(festThis.intl.concat(festNext.intl), 2), 10, "medium", C.sub, { maxLines: 1, minScale: 0.8 }) ], 6)
       ]
     };
   }
@@ -290,7 +374,10 @@ export default async function(ctx) {
     ...buildRows(rawYi, 'checkmark.circle.fill', C.yi, '宜'),
     ...buildRows(rawJi, 'xmark.circle.fill', C.ji, '忌'),
     ...buildRows(`${chongshaInfo}  |  运势: ${starStr}`, 'shield.lefthalf.filled', C.gold, '冲煞'),
-    ...buildRows((isLarge ? upcomingTermsLarge : upcomingTerms).join("，"), 'leaf.arrow.circlepath', C.term, '节气', C.term)
+    ...buildRows(legalStr, 'flag.fill', '#FF6B5E', '法定'),
+    ...buildRows(termCountdownStr, 'leaf.arrow.circlepath', C.term, '节气', C.term),
+    ...buildRows(folkStr, 'moon.stars.fill', '#FFB340', '民俗'),
+    ...buildRows(intlStr, 'globe.asia.australia.fill', '#64A8FF', '国际')
   ];
 
   return {
