@@ -219,13 +219,21 @@ export default async function(ctx) {
     return lines;
   };
 
+  // 给颜色加透明度（支持 {light,dark} 对象和字符串）
+  const withAlpha = (c, a) => {
+    if (typeof c === 'string') return c + a;
+    if (c && typeof c === 'object') return { light: c.light + a, dark: c.dark + a };
+    return c;
+  };
   const createRowFactory = (config) => (raw, icon, color, label, contentColor = C.sub) => {
     if (!raw) return [];
     const lines = splitTextToLines(raw, config.maxW);
     return lines.map((lineStr, idx) => ({
       type: 'stack', direction: 'row', alignItems: 'start', gap: 4,
       children: [
-        { type: 'stack', direction: 'row', alignItems: 'center', gap: 2, width: config.lw, children: [
+        { type: 'stack', direction: 'row', alignItems: 'center', gap: 2,
+          ...(idx === 0 ? { padding: [3, 7, 3, 7], borderRadius: 7, backgroundColor: withAlpha(color, '20') } : { width: config.lw }),
+          children: [
           mkIcon(idx === 0 ? icon : 'circle.fill', idx === 0 ? color : C.transparent, config.icz),
           mkText(idx === 0 ? label : " ", config.fz, "heavy", idx === 0 ? color : C.transparent)
         ]},
