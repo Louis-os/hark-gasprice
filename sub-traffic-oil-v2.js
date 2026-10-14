@@ -678,7 +678,7 @@ function subRow(s, i, barW, opts = {}) {
 
 function refreshAt(ctx) {
   const v = Number(ctx.env?.REFRESH_HOURS);
-  const h = Number.isFinite(v) ? Math.min(24, Math.max(0.5, v)) : 2;
+  const h = Number.isFinite(v) ? Math.min(720, Math.max(0.5, v)) : 168;
   return new Date(Date.now() + h * 3600000).toISOString();
 }
 

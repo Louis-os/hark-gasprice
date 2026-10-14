@@ -71,8 +71,8 @@ env_schema:
     default_value: ''
   REFRESH_HOURS:
     name: 刷新间隔（小时）
-    description: 范围 0.5 ~ 24
-    default_value: '1'
+    description: 范围 0.5 ~ 720（小时），168 = 一周
+    default_value: '0.5'
   SUBSCRIPTION_USER_AGENT:
     name: 自定义 User-Agent
     description: 可选，留空自动尝试 clash.meta / Surge 等常见标识
