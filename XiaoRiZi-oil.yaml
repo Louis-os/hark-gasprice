@@ -3,7 +3,7 @@ description: 农历信息 + 法定/节气/民俗/国际四类节日倒计时，�
 scriptings:
   - generic:
       name: 万年历
-      script_url: https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/XiaoRiZi-v3.js?v=20261014a
+      script_url: https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/XiaoRiZi-v3.js?v=20261014b
       timeout: 30
 widgets:
   - name: 万年历

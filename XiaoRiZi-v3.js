@@ -138,7 +138,7 @@ function top3(all, today){
 
 // ── DSL 帮助函数 ──────────────────────────────────────
 function t(text, sz, wt, color, extra){
-  var el={type:"text",text:String(text),font:{size:sz,weight:wt||"regular"},textColor:color||"#000000"};
+  var el={type:"text",text:String(text),font:{size:sz,weight:wt||"regular"},textColor:color||{light:"#000000",dark:"#FFFFFF"}};
   if(extra)for(var k in extra)el[k]=extra[k];
   return el;
 }
@@ -180,25 +180,25 @@ export default async function(ctx){
     term :"#30D158",   // 薄荷绿
     folk :"#FFB340",   // 暖金
     intl :"#64A8FF",   // 天蓝
-    dim  :"#3C3C4399",
-    faint:"#3C3C4366",
-    sep  :"#3C3C4326",
+    dim  :{light:"#3C3C4399",dark:"#EBEBF599"},
+    faint:{light:"#3C3C4366",dark:"#EBEBF566"},
+    sep  :{light:"#3C3C4326",dark:"#EBEBF526"},
   };
 
   // ── 节日胶囊 ───
   // 格式：[名称]  [X天] 用竖分隔线区分
   function chip(name, days, accent){
     var today0=days===0;
-    var nameColor=today0?"#000000":AC.dim;
+    var nameColor=today0?{light:"#000000",dark:"#FFFFFF"}:AC.dim;
     var daysLabel=today0?"今天":days+"天";
-    var daysColor=today0?accent:"#3C3C4399";
+    var daysColor=today0?accent:{light:"#3C3C4399",dark:"#EBEBF599"};
     return row([
       t(name, 10, today0?"semibold":"regular", nameColor),
       t(daysLabel, 10, today0?"bold":"regular", daysColor, {fontFamily:"Menlo"}),
     ],{
       gap:3,
       padding:[3,7,3,7],
-      backgroundColor: today0?(accent+"2E"):"#FFFFFFA6",
+      backgroundColor: today0?(accent+"2E"):{light:"#FFFFFFA6",dark:"#FFFFFF1A"},
       borderRadius:7,
     });
   }
@@ -230,7 +230,7 @@ export default async function(ctx){
   var astro     = L ? L.astro : "";
 
   var headerLeft = col([
-    t(lunarDay, 26, "bold", "#000000"),
+    t(lunarDay, 26, "bold", {light:"#000000",dark:"#FFFFFF"}),
     row([
       t(lunarMon, 9, "regular", AC.dim),
       t("·", 9, "regular", AC.faint),
@@ -241,10 +241,10 @@ export default async function(ctx){
   var headerRight = col([
     row([
       ic("calendar", 12, "#FFB340"),
-      t((now.getMonth()+1)+"月"+now.getDate()+"日", 15, "semibold", "#000000"),
+      t((now.getMonth()+1)+"月"+now.getDate()+"日", 15, "semibold", {light:"#000000",dark:"#FFFFFF"}),
     ],{gap:3}),
-    t("星期"+wkCN+"   "+astro, 10, "regular", "#3C3C43CC"),
-    t(gzLine, 9, "regular", "#3C3C4399"),
+    t("星期"+wkCN+"   "+astro, 10, "regular", {light:"#3C3C43CC",dark:"#EBEBF5CC"}),
+    t(gzLine, 9, "regular", {light:"#3C3C4399",dark:"#EBEBF599"}),
   ],{gap:2, alignItems:"end"});
 
   var header = row([headerLeft, sp(), headerRight],{alignItems:"center"});
@@ -260,7 +260,7 @@ export default async function(ctx){
     gap:0,
     backgroundGradient:{
     type:"linear",
-    colors:["#FFF6EA","#F4F0FF","#EEF6FF"],
+    colors:[{light:"#FFF6EA",dark:"#2A1708"},{light:"#F4F0FF",dark:"#140F26"},{light:"#EEF6FF",dark:"#07121F"}],
     stops:[0,0.5,1],
     startPoint:{x:0,y:0},
     endPoint:{x:1,y:1},
