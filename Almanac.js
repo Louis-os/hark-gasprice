@@ -232,7 +232,7 @@ export default async function(ctx) {
       type: 'stack', direction: 'row', alignItems: 'start', gap: 4,
       children: [
         { type: 'stack', direction: 'row', alignItems: 'center', gap: 2,
-          ...(idx === 0 ? { padding: [3, 7, 3, 7], borderRadius: 7, backgroundColor: withAlpha(color, '20') } : { width: config.lw }),
+          ...(idx === 0 ? { width: config.lw, padding: [3, 7, 3, 7], borderRadius: 7, backgroundColor: withAlpha(color, '20') } : { width: config.lw }),
           children: [
           mkIcon(idx === 0 ? icon : 'circle.fill', idx === 0 ? color : C.transparent, config.icz),
           mkText(idx === 0 ? label : " ", config.fz, "heavy", idx === 0 ? color : C.transparent)
@@ -278,7 +278,7 @@ export default async function(ctx) {
   const mediumConfig = {
     fz: 12,
     icz: 13,
-    lw: 52,
+    lw: 68,
     maxW: 48,
     headerFz: 15,
     topIconFz: 11,
@@ -288,7 +288,7 @@ export default async function(ctx) {
   const largeConfig = {
     fz: 14,
     icz: 15,
-    lw: 60,
+    lw: 76,
     maxW: 38,
     headerFz: 17,
     topIconFz: 12,
