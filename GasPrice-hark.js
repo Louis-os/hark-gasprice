@@ -12,6 +12,8 @@
  *  • 支持锁屏小组件（行内 / 圆形 / 矩形）
  *  • 2026-10-14 补丁：TARGET_FUELS 增加 E92/E95，92/95 优先普通油号、缺失时用乙醇油号兜底
  *    （河南等乙醇汽油省份：接口把汽油记在 E92/E92#、E95/E95# 键名下，原版会被过滤掉导致显示 --）
+ *  • 2026-10-14 补丁2：中石化接口缺失的油号（如河南 98#），用汽油价格网
+ *    (m.qiyoujiage.com) 数据兜底；仅在缺失时触发，不影响原有涨跌幅与走势数据
  *
  * 环境变量：
  *  PROVINCE  省份编码或名称（默认 11 北京）
@@ -181,6 +183,31 @@ async function loadPrediction(ctx, provinceCode) {
   return { up, minV, maxV, nextMD };
 }
 
+// 兜底：中石化接口缺失的油号（如河南 98#），用汽油价格网 (m.qiyoujiage.com) 的数据补齐
+async function loadQyjFallback(ctx, provinceCode) {
+  const slug = QYJ_SLUGS[provinceCode];
+  if (!slug) return null;
+  try {
+    const resp = await ctx.http.get(`${QYJ_BASE}/${slug}.shtml`, {
+      headers: { 'User-Agent': COMMON_HEADERS['User-Agent'], 'Referer': `${QYJ_BASE}/` },
+      timeout: 10000
+    });
+    const html = await resp.text();
+    const regPrice = /<dt>([^<]*?油)<\/dt>\s*<dd>\s*([\d.]+)/g;
+    const out = {};
+    let m;
+    while ((m = regPrice.exec(html)) !== null) {
+      const name = m[1], val = parseFloat(m[2]);
+      if (!Number.isFinite(val)) continue;
+      if (/98/.test(name)) out.p98 = val;
+      else if (/95/.test(name)) out.p95 = val;
+      else if (/92/.test(name)) out.p92 = val;
+      else if (/0\s*号|柴油/.test(name)) out.diesel = val;
+    }
+    return out;
+  } catch (_) { return null; }
+}
+
 function resolveAreaIndex(current, cityName, explicitIndex) {
   if (explicitIndex != null && explicitIndex >= 0) return explicitIndex;
   const area = (current.data || current).area || [];
@@ -339,6 +366,13 @@ async function getState(ctx) {
     const pick = it => it ? { price: Number(it.price), offset: Number(it.offset) || 0, series: it.series || [] } : null;
     // 补丁：92/95 优先普通油号，缺失时用乙醇油号(E92/E95)兜底（河南等乙醇汽油省份）
     const fuels = { p92: pick(f.GAS_92 || f.E92), p95: pick(f.GAS_95 || f.E95), p98: pick(f.GAS_98 || f.AIPAO98), diesel: pick(f.CHAI_0) };
+    // 补丁2：缺失的油号用汽油价格网兜底（仅缺失时触发，不影响中石化的涨跌幅与走势数据）
+    if (['p92', 'p95', 'p98', 'diesel'].some(k => !fuels[k])) {
+      const fb = await loadQyjFallback(ctx, provinceCode);
+      if (fb) for (const k of ['p92', 'p95', 'p98', 'diesel']) {
+        if (!fuels[k] && Number.isFinite(fb[k])) fuels[k] = { price: fb[k], offset: 0, series: [] };
+      }
+    }
     if (!Object.values(fuels).some(v => v && Number.isFinite(v.price))) throw new Error('接口未返回油价');
     state = { fuels, updatedAt: Date.now(), region: cityName || payload.provinceName };
     try { ctx.storage?.setJSON(cacheKey, state); } catch (_) {}
