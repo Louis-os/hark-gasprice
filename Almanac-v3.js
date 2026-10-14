@@ -317,6 +317,37 @@ export default async function(ctx) {
     }));
   };
 
+  // 按节日边界切行：每个节日是一个整体，绝不从中间切断
+  const buildFestivalRows = (items, icon, color, label) => {
+    if (!items || !items.length) return [];
+    const lines = [];
+    let cur = [], curW = 0;
+    for (const it of items) {
+      const txt = `${it.name} ${it.days}`;
+      const w = [...txt].reduce((s, c) => s + (c.charCodeAt(0) > 255 ? 2 : 1.1), 0);
+      const sepW = cur.length > 0 ? 3.3 : 0; // " · " 宽度
+      if (cur.length > 0 && curW + sepW + w > config.maxW) {
+        lines.push(cur);
+        cur = [it];
+        curW = w;
+      } else {
+        cur.push(it);
+        curW += sepW + w;
+      }
+    }
+    if (cur.length) lines.push(cur);
+    return lines.map((lineItems, idx) => ({
+      type: 'stack', direction: 'row', alignItems: 'start', gap: 4,
+      children: [
+        { type: 'stack', direction: 'row', alignItems: 'center', gap: 2, width: config.lw, children: [
+          mkIcon(idx === 0 ? icon : 'circle.fill', idx === 0 ? color : C.transparent, config.icz),
+          mkText(idx === 0 ? label : " ", config.fz, "heavy", idx === 0 ? color : C.transparent)
+        ]},
+        mkText(lineItems.map(x => `${x.name} ${x.days}`).join(' · '), config.fz, "medium", C.sub, { flex: 1, maxLines: 1 })
+      ]
+    }));
+  };
+
   // ── 小号布局 ─────────────────────
   if (isSmall) {
     return {
@@ -360,7 +391,7 @@ export default async function(ctx) {
     fz: 12,
     icz: 13,
     lw: 52,
-    maxW: 48,
+    maxW: 42,
     headerFz: 15,
     topIconFz: 11,
     gap: 6
@@ -384,48 +415,21 @@ export default async function(ctx) {
     ...buildRows(rawJi, 'xmark.circle.fill', C.ji, '忌'),
     ...buildRows(`${chongshaInfo}  |  运势: ${starStr}`, 'shield.lefthalf.filled', C.gold, '冲煞'),
   ];
-  // 倒计时：油价式 2x2 玻璃方块，每类一个方块，里面一节日一行
-  const catCard = (icon, label, color, items) => {
-    // 每行并排两个节日，每个节日是独立元素，绝不从中间断开
-    const pairRows = [];
-    for (let i = 0; i < items.length; i += 2) {
-      const a = items[i];
-      const b = items[i + 1];
-      const row = [
-        mkText(`${a.name} ${a.days}`, isLarge ? 11 : 10, 'medium', C.sub, { maxLines: 1 }),
-      ];
-      if (b) {
-        row.push(mkText('·', isLarge ? 11 : 10, 'medium', C.sub, { maxLines: 1 }));
-        row.push(mkText(`${b.name} ${b.days}`, isLarge ? 11 : 10, 'medium', C.sub, { maxLines: 1 }));
-      }
-      pairRows.push(mkRow(row, 4));
-    }
-    return {
-      type: 'stack', direction: 'column', alignItems: 'start',
-      flex: 1, gap: 3, padding: [8, 10, 8, 10], borderRadius: 14,
-      backgroundColor: C.glass,
-      children: [
-        mkRow([mkIcon(icon, color, 11), mkText(label, 11, 'bold', color)], 4),
-        ...pairRows
-      ]
-    };
-  };
   const termItems = upcomingTerms.slice(0, festCount).map(s => {
     const parts = s.split(' ');
     return { name: parts[0], days: parts.slice(1).join(' ') };
   });
-  const countdownGrid = {
-    type: 'stack', direction: 'column', gap: 6,
-    children: [
-      mkRow([
-        catCard('flag.fill', '法定', '#FF6B5E', countdownItems(festThis.legal.concat(festNext.legal), festCount)),
-        catCard('leaf.arrow.circlepath', '节气', C.term, termItems)
-      ], 6),
-      mkRow([
-        catCard('moon.stars.fill', '民俗', '#FFB340', countdownItems(festThis.folk.concat(festNext.folk), festCount)),
-        catCard('globe.asia.australia.fill', '国际', '#64A8FF', countdownItems(festThis.intl.concat(festNext.intl), festCount))
-      ], 6)
-    ]
+  // 倒计时：横排，每类一行，标签 + 节日用 · 隔开（按节日边界切行）
+  const countdownRows = [
+    ...buildFestivalRows(countdownItems(festThis.legal.concat(festNext.legal), festCount), 'flag.fill', '#FF6B5E', '法定'),
+    ...buildFestivalRows(termItems, 'leaf.arrow.circlepath', C.term, '节气'),
+    ...buildFestivalRows(countdownItems(festThis.folk.concat(festNext.folk), festCount), 'moon.stars.fill', '#FFB340', '民俗'),
+    ...buildFestivalRows(countdownItems(festThis.intl.concat(festNext.intl), festCount), 'globe.asia.australia.fill', '#64A8FF', '国际')
+  ];
+  const countdownCard = {
+    type: 'stack', direction: 'column', alignItems: 'start',
+    gap: config.gap, padding: [8, 10, 8, 10], borderRadius: 14,
+    backgroundColor: C.glass, children: countdownRows
   };
 
   return {
@@ -466,7 +470,7 @@ export default async function(ctx) {
 
       mkSpacer(isLarge ? 8 : 6),
 
-      countdownGrid,
+      countdownCard,
 
       mkSpacer()
     ]
