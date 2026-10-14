@@ -26,15 +26,15 @@ export default async function(ctx) {
 
   // ── 色彩令牌 ──────────────────────────────────────────────────────────────
   const C = {
-    bg:          [{ light: '#FFFFFF', dark: '#1C1C1E' }, { light: '#F2F2F7', dark: '#0C0C0E' }],
-    main:        { light: '#1C1C1E', dark: '#FFFFFF'  },
-    sub:         { light: '#48484A', dark: '#D1D1D6'  },
-    muted:       { light: '#8E8E93', dark: '#8E8E93'  },
+    bg:          [{ light: '#FFF6EA', dark: '#2A1708' }, { light: '#F4F0FF', dark: '#140F26' }, { light: '#EEF6FF', dark: '#07121F' }],
+    main:        { light: '#000000', dark: '#FFFFFF'  },
+    sub:         { light: '#3C3C4399', dark: '#EBEBF599'  },
+    muted:       { light: '#3C3C4399', dark: '#EBEBF599'  },
     divider:     { light: '#E5E5EA', dark: '#38383A'  },
-    gold:        { light: '#B58A28', dark: '#D6A53A'  },
-    yi:          { light: '#2E8045', dark: '#32D74B'  },
-    ji:          { light: '#CA3B32', dark: '#FF453A'  },
-    term:        { light: '#628C7B', dark: '#73A491'  },
+    gold:        { light: '#FFB340', dark: '#FFB340'  },
+    yi:          { light: '#30D158', dark: '#30D158'  },
+    ji:          { light: '#FF453A', dark: '#FF453A'  },
+    term:        { light: '#64A8FF', dark: '#64A8FF'  },
     transparent: '#00000000'
   };
 
@@ -154,7 +154,11 @@ export default async function(ctx) {
   // ── 远程黄历数据 ─────────────────────────────────────────────────────────
   let apiData = {};
   try {
-    const resp = await ctx.http.get(`https://raw.githubusercontent.com/zqzess/openApiData/main/calendar_new/${Y}/${Y}${P(M)}.json`, { timeout: 10000 });
+    let resp = null;
+    for (let attempt = 0; attempt < 2 && !resp; attempt++) {
+      try { resp = await ctx.http.get(`https://raw.githubusercontent.com/zqzess/openApiData/main/calendar_new/${Y}/${Y}${P(M)}.json`, { timeout: 10000 }); } catch (_) { resp = null; }
+    }
+    if (!resp) throw new Error('fetch failed');
     const json     = JSON.parse(await resp.text());
     const patterns = [`${Y}-${P(M)}-${P(D)}`, `${Y}-${M}-${D}`, `${Y}/${P(M)}/${P(D)}`, `${Y}/${M}/${D}`, `${Y}${P(M)}${P(D)}`];
 
