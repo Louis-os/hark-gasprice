@@ -193,18 +193,18 @@ async function loadQyjFallback(ctx, provinceCode) {
       timeout: 10000
     });
     const html = await resp.text();
-    const regPrice = /<dt>([^<]*?油)<\/dt>\s*<dd>\s*([\d.]+)/g;
-    const out = {};
-    let m;
-    while ((m = regPrice.exec(html)) !== null) {
-      const name = m[1], val = parseFloat(m[2]);
-      if (!Number.isFinite(val)) continue;
-      if (/98/.test(name)) out.p98 = val;
-      else if (/95/.test(name)) out.p95 = val;
-      else if (/92/.test(name)) out.p92 = val;
-      else if (/0\s*号|柴油/.test(name)) out.diesel = val;
-    }
-    return out;
+    // 先剥掉所有 HTML 标签再按"名称+价格"文本配对，不依赖具体标签结构，抗页面改版
+    const text = String(html).replace(/<[^>]*>/g, '\n').replace(/&nbsp;/g, ' ');
+    const getPrice = (label) => {
+      const m = text.match(new RegExp('(^|[^\\d])' + label + '\\s*([\\d]+\\.[\\d]+)'));
+      return m ? parseFloat(m[2]) : NaN;
+    };
+    return {
+      p92: getPrice('92号汽油'),
+      p95: getPrice('95号汽油'),
+      p98: getPrice('98号汽油'),
+      diesel: getPrice('0号柴油'),
+    };
   } catch (_) { return null; }
 }
 
@@ -366,11 +366,12 @@ async function getState(ctx) {
     const pick = it => it ? { price: Number(it.price), offset: Number(it.offset) || 0, series: it.series || [] } : null;
     // 补丁：92/95 优先普通油号，缺失时用乙醇油号(E92/E95)兜底（河南等乙醇汽油省份）
     const fuels = { p92: pick(f.GAS_92 || f.E92), p95: pick(f.GAS_95 || f.E95), p98: pick(f.GAS_98 || f.AIPAO98), diesel: pick(f.CHAI_0) };
-    // 补丁2：缺失的油号用汽油价格网兜底（仅缺失时触发，不影响中石化的涨跌幅与走势数据）
-    if (['p92', 'p95', 'p98', 'diesel'].some(k => !fuels[k])) {
+    // 补丁2：中石化缺失（或价格无效）的油号，用汽油价格网兜底；仅缺失时触发，不影响原有涨跌幅与走势数据
+    const needFix = (k) => !fuels[k] || !Number.isFinite(fuels[k].price);
+    if (['p92', 'p95', 'p98', 'diesel'].some(needFix)) {
       const fb = await loadQyjFallback(ctx, provinceCode);
       if (fb) for (const k of ['p92', 'p95', 'p98', 'diesel']) {
-        if (!fuels[k] && Number.isFinite(fb[k])) fuels[k] = { price: fb[k], offset: 0, series: [] };
+        if (needFix(k) && Number.isFinite(fb[k])) fuels[k] = { price: fb[k], offset: 0, series: [] };
       }
     }
     if (!Object.values(fuels).some(v => v && Number.isFinite(v.price))) throw new Error('接口未返回油价');
