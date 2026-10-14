@@ -1,0 +1,10 @@
+name: 小日子（Hark 仪表盘版）
+description: 农历信息 + 四类节日倒计时（法定/节气/民俗/国际），与油价小组件统一的渐变玻璃风格
+scriptings:
+  - generic:
+      name: 小日子-Hark
+      script_url: https://raw.githubusercontent.com/Louis-os/hark-gasprice/main/XiaoRiZi-hark.js?v=1
+      timeout: 30
+widgets:
+  - name: 小日子-Hark
+    script_name: 小日子-Hark
