@@ -1,0 +1,10 @@
+name: 日历（Hark 仪表盘版）
+description: 双周/月历，与油价小组件统一的渐变玻璃风格，含节假日调休标记与今日黄历
+scriptings:
+  - generic:
+      name: 日历-Hark
+      script_url: https://raw.githubusercontent.com/Louis-os/hark-gasprice/main/CN_Cal-hark.js?v=20261014a
+      timeout: 30
+widgets:
+  - name: 日历-Hark
+    script_name: 日历-Hark
