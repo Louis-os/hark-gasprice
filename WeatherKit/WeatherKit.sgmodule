@@ -11,11 +11,11 @@ DOMAIN-SUFFIX,tthr.apple.com,REJECT
 DOMAIN,tether.edge.apple,REJECT
 
 [Rewrite]
-^https?:\/\/weatherkit\.apple\.com\/api\/v1\/availability\/ url script-response-body https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/WeatherKit/response.bundle.js
-^https?:\/\/weatherkit\.apple\.com\/api\/v1\/airQualityScale\/ url script-request-header https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/WeatherKit/request.bundle.js
-^https?:\/\/weatherkit\.apple\.com\/api\/v1\/weatherAlerts\?[^#]*&ids=[^&#]*-[0-9]{9}(?:&|$) url script-echo-response https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/WeatherKit/request.bundle.js
-^https?:\/\/weatherkit\.apple\.com\/api\/v1\/weatherAlerts\?[^#]*&ids=-?[0-9]+(?:\.[0-9]+)?,-?[0-9]+(?:\.[0-9]+)?(?:&|$) url script-echo-response https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/WeatherKit/request.bundle.js
-^https?:\/\/weatherkit\.apple\.com\/api\/v2\/weather\/ url script-response-body https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/WeatherKit/response.bundle.js
+^https?:\/\/weatherkit\.apple\.com\/api\/v1\/availability\/ url script-response-body https://cdn.jsdelivr.net/gh/Louis-os/hark-gasprice@main/WeatherKit/response.bundle.js
+^https?:\/\/weatherkit\.apple\.com\/api\/v1\/airQualityScale\/ url script-request-header https://cdn.jsdelivr.net/gh/Louis-os/hark-gasprice@main/WeatherKit/request.bundle.js
+^https?:\/\/weatherkit\.apple\.com\/api\/v1\/weatherAlerts\?[^#]*&ids=[^&#]*-[0-9]{9}(?:&|$) url script-echo-response https://cdn.jsdelivr.net/gh/Louis-os/hark-gasprice@main/WeatherKit/request.bundle.js
+^https?:\/\/weatherkit\.apple\.com\/api\/v1\/weatherAlerts\?[^#]*&ids=-?[0-9]+(?:\.[0-9]+)?,-?[0-9]+(?:\.[0-9]+)?(?:&|$) url script-echo-response https://cdn.jsdelivr.net/gh/Louis-os/hark-gasprice@main/WeatherKit/request.bundle.js
+^https?:\/\/weatherkit\.apple\.com\/api\/v2\/weather\/ url script-response-body https://cdn.jsdelivr.net/gh/Louis-os/hark-gasprice@main/WeatherKit/response.bundle.js
 
 [MITM]
 hostname = weatherkit.apple.com
