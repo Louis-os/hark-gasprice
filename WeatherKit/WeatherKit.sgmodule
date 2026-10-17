@@ -1,0 +1,21 @@
+#!name = WeatherKit功能增强@NSRingo 解锁苹果天气
+#!desc = 解锁全部天气功能、修改空气质量/下一小时降水/天气数据/预警数据（原作者 NSRingo，镜像自 v3.3.2）
+#!category = NSRingo
+#!icon = https://developer.apple.com/assets/elements/icons/weatherkit/weatherkit-128x128.png
+#!author = VirgilClyne,WordlessEcho,001ProMax,hhh2210
+#!homepage = https://NSRingo.github.io/guide/Weather/weather-kit
+
+[Rule]
+DOMAIN,weather-analytics-events.apple.com,REJECT
+DOMAIN-SUFFIX,tthr.apple.com,REJECT
+DOMAIN,tether.edge.apple,REJECT
+
+[Rewrite]
+^https?:\/\/weatherkit\.apple\.com\/api\/v1\/availability\/ url script-response-body https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/WeatherKit/response.bundle.js
+^https?:\/\/weatherkit\.apple\.com\/api\/v1\/airQualityScale\/ url script-request-header https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/WeatherKit/request.bundle.js
+^https?:\/\/weatherkit\.apple\.com\/api\/v1\/weatherAlerts\?[^#]*&ids=[^&#]*-[0-9]{9}(?:&|$) url script-echo-response https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/WeatherKit/request.bundle.js
+^https?:\/\/weatherkit\.apple\.com\/api\/v1\/weatherAlerts\?[^#]*&ids=-?[0-9]+(?:\.[0-9]+)?,-?[0-9]+(?:\.[0-9]+)?(?:&|$) url script-echo-response https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/WeatherKit/request.bundle.js
+^https?:\/\/weatherkit\.apple\.com\/api\/v2\/weather\/ url script-response-body https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/WeatherKit/response.bundle.js
+
+[MITM]
+hostname = weatherkit.apple.com
