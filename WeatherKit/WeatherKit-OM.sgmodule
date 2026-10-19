@@ -1,0 +1,29 @@
+#!name=WeatherKit功能增强@NSRingo（Open-Meteo 版）
+#!desc=基于 v3.3.2 复制修改：分钟级降水数据源从彩云公共 Key 改为免费 Open-Meteo，不再受公共 Key 限流影响。原版不动，此为独立副本。
+#!author=VirgilClyne,WordlessEcho,001 / Colin (mod)
+#!icon=https://developer.apple.com/assets/elements/icons/weatherkit/weatherkit-128x128.png
+#!homepage=https://github.com/Louis-os/hark-gasprice
+#!version=3.3.2-om1
+
+[Rule]
+DOMAIN,weather-analytics-events.apple.com,REJECT
+DOMAIN-SUFFIX,tthr.apple.com,REJECT
+DOMAIN,tether.edge.apple,REJECT
+
+[Script]
+# 🌤 WeatherKit.api.v1.availability.response
+response-om.bundle = type=http-response, pattern=^https?:\/\/weatherkit\.apple\.com\/api\/v1\/availability\/, script-path=https://cdn.jsdelivr.net/gh/Louis-os/hark-gasprice@main/WeatherKit/v3-om/response-om.bundle.js, requires-body=true, max-size=-1, timeout=60
+
+# 🌤 WeatherKit.api.v1.airQualityScale.request
+request-om.bundle = type=http-request, pattern=^https?:\/\/weatherkit\.apple\.com\/api\/v1\/airQualityScale\/, script-path=https://cdn.jsdelivr.net/gh/Louis-os/hark-gasprice@main/WeatherKit/v3-om/request-om.bundle.js, timeout=60
+
+# 🌤 WeatherKit.api.v1.weatherAlerts.response
+request-om.bundle = type=http-request, pattern=^https?:\/\/weatherkit\.apple\.com\/api\/v1\/weatherAlerts\?[^#]*&ids=[^&#]*-[0-9]{9}(?:&|$), script-path=https://cdn.jsdelivr.net/gh/Louis-os/hark-gasprice@main/WeatherKit/v3-om/request-om.bundle.js, timeout=60
+
+request-om.bundle = type=http-request, pattern="^https?:\/\/weatherkit\.apple\.com\/api\/v1\/weatherAlerts\?[^#]*&ids=-?[0-9]+(?:\.[0-9]+)?,-?[0-9]+(?:\.[0-9]+)?(?:&|$)", script-path=https://cdn.jsdelivr.net/gh/Louis-os/hark-gasprice@main/WeatherKit/v3-om/request-om.bundle.js, timeout=60
+
+# 🌤 WeatherKit.api.v2.weather.response
+response-om.bundle = type=http-response, pattern=^https?:\/\/weatherkit\.apple\.com\/api\/v2\/weather\/, script-path=https://cdn.jsdelivr.net/gh/Louis-os/hark-gasprice@main/WeatherKit/v3-om/response-om.bundle.js, requires-body=true, max-size=-1, timeout=60
+
+[MITM]
+hostname = %APPEND% weatherkit.apple.com
