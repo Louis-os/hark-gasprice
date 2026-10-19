@@ -1,0 +1,26 @@
+#!name =  iRingo: 🌤 WeatherKit v4
+#!desc = v4.0.0-beta3 和风版，填自己的和风 Key 和专属 Host
+#!author = VirgilClyne,WordlessEcho,001ProMax
+#!icon = https://developer.apple.com/assets/elements/icons/weatherkit/weatherkit-128x128.png
+#!version = 4.0.0-beta3
+
+[Argument]
+Weather.Provider = select,"QWeather","ColorfulClouds","WeatherKit",tag=[天气] 数据源,desc=使用选定的数据源替换天气数据。
+NextHour.Provider = select,"QWeather","ColorfulClouds","WeatherKit",tag=[未来一小时降水强度] 数据源,desc=使用选定的数据源填充未来一小时降水强度的数据。
+API.QWeather.Host = input,"",tag=[API] 和风天气主机,desc=和风天气 API 专属主机名（如 p75cttwft8.re.qweatherapi.com）
+API.QWeather.Token = input,"",tag=[API] 和风天气令牌,desc=和风天气 API 令牌
+API.ColorfulClouds.Token = input,"",tag=[API] 彩云天气令牌,desc=彩云天气 API 令牌（可选，不填用公共 Key）
+LogLevel = select,"WARN","OFF","ERROR","INFO","DEBUG","ALL",tag=[调试] 日志等级,desc=选择脚本日志的输出等级
+
+[Rule]
+DOMAIN,weather-analytics-events.apple.com,REJECT-DROP
+DOMAIN-SUFFIX,tthr.apple.com,REJECT-DROP
+DOMAIN,tether.edge.apple,REJECT-DROP
+
+[Script]
+http-response ^https?:\/\/weatherkit\.apple\.com\/api\/v1\/availability\/ requires-body=1, script-path=https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/WeatherKit/v4/response.bundle.js, tag=🌤 WeatherKit.v4.availability.response, argument=Weather.Provider={Weather.Provider}&NextHour.Provider={NextHour.Provider}&API.QWeather.Host={API.QWeather.Host}&API.QWeather.Token={API.QWeather.Token}&API.ColorfulClouds.Token={API.ColorfulClouds.Token}&LogLevel={LogLevel}
+http-request ^https?:\/\/weatherkit\.apple\.com\/api\/v1\/airQualityScale\/ script-path=https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/WeatherKit/v4/request.bundle.js, tag=🌤 WeatherKit.v4.airQualityScale.request, argument=Weather.Provider={Weather.Provider}&NextHour.Provider={NextHour.Provider}&API.QWeather.Host={API.QWeather.Host}&API.QWeather.Token={API.QWeather.Token}&API.ColorfulClouds.Token={API.ColorfulClouds.Token}&LogLevel={LogLevel}
+http-response ^https?:\/\/weatherkit\.apple\.com\/api\/v2\/weather\/ requires-body=1, binary-body-mode=1, script-path=https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/WeatherKit/v4/response.bundle.js, tag=🌤 WeatherKit.v4.weather.response, argument=Weather.Provider={Weather.Provider}&NextHour.Provider={NextHour.Provider}&API.QWeather.Host={API.QWeather.Host}&API.QWeather.Token={API.QWeather.Token}&API.ColorfulClouds.Token={API.ColorfulClouds.Token}&LogLevel={LogLevel}
+
+[MITM]
+hostname = weatherkit.apple.com
