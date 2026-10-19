@@ -1,0 +1,22 @@
+#!name =  iRingo: 🌤 WeatherKit v3
+#!desc = v3.3.2 彩云版，可填自己的彩云 Key（不填用公共 Key）
+#!author = VirgilClyne,WordlessEcho,001ProMax
+#!icon = https://developer.apple.com/assets/elements/icons/weatherkit/weatherkit-128x128.png
+#!version = 3.3.2
+
+[Argument]
+API.ColorfulClouds.Token = input,"",tag=[API] 彩云天气令牌,desc=彩云天气 API 令牌，不填则使用内置公共 Key
+LogLevel = select,"WARN","OFF","ERROR","INFO","DEBUG","ALL",tag=[调试] 日志等级,desc=选择脚本日志的输出等级
+
+[Rule]
+DOMAIN,weather-analytics-events.apple.com,REJECT-DROP
+DOMAIN-SUFFIX,tthr.apple.com,REJECT-DROP
+DOMAIN,tether.edge.apple,REJECT-DROP
+
+[Script]
+http-response ^https?:\/\/weatherkit\.apple\.com\/api\/v1\/availability\/ requires-body=1, script-path=https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/WeatherKit/response.bundle.js, tag=🌤 WeatherKit.v3.availability.response, argument=API.ColorfulClouds.Token={API.ColorfulClouds.Token}&LogLevel={LogLevel}
+http-request ^https?:\/\/weatherkit\.apple\.com\/api\/v1\/airQualityScale\/ script-path=https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/WeatherKit/request.bundle.js, tag=🌤 WeatherKit.v3.airQualityScale.request, argument=API.ColorfulClouds.Token={API.ColorfulClouds.Token}&LogLevel={LogLevel}
+http-response ^https?:\/\/weatherkit\.apple\.com\/api\/v2\/weather\/ requires-body=1, binary-body-mode=1, script-path=https://raw.githubusercontent.com/Louis-os/hark-gasprice/refs/heads/main/WeatherKit/response.bundle.js, tag=🌤 WeatherKit.v3.weather.response, argument=API.ColorfulClouds.Token={API.ColorfulClouds.Token}&LogLevel={LogLevel}
+
+[MITM]
+hostname = weatherkit.apple.com
