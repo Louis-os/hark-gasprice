@@ -1,0 +1,14 @@
+# NAME: Douyin Restore (pre-deletion coverage)
+# 恢复用：覆盖删掉的本地规则里在日志中出现过的字节域名，先恢复到能用，再慢慢收窄
+#
+# 用法：Egern 添加远程规则集，URL 填本文件链接，策略选「Douyin&Xiaohongshu IP专用」
+# 注意：先加这个、验证抖音能用了，再动其他规则；不要先删旧的
+# 收窄时一次只动一条，动完验证，没问题再动下一条
+
+DOMAIN-SUFFIX,amemv.com
+DOMAIN-SUFFIX,zijieapi.com
+DOMAIN-SUFFIX,byteeffecttos.com
+DOMAIN-SUFFIX,bytegecko.com
+DOMAIN-SUFFIX,bytedance.com
+DOMAIN,aweme.snssdk.com
+DOMAIN-SUFFIX,douyin.com
