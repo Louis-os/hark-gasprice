@@ -1,26 +1,11 @@
-# NAME: Douyin Post & Comment Only
-# 抖音仅发作品、评论走代理，不走全局
-#
-# 用法（Egern）：
-#   添加远程规则集，URL 填本文件链接，策略选你的代理节点（不要选 DIRECT），
-#   并把这条规则集放在其他抖音/直连规则上面（Egern 按顺序匹配）。
-#   不要同时开全量抖音分流（比如 blackmatrix7 的 DouYin.list），否则以排在前面的为准。
-#
-# 原理：作品/评论显示的 IP 属地，由发表那一下的 API 请求 IP 决定，
-#   所以只代理 API 域名就够了；视频、图片走 CDN 直连，刷视频不受影响。
-#   Feed 列表 API 也在 amemv.com 上，但那只是轻量 JSON，不拖速度。
-#
-# 覆盖：
-#   amemv.com           抖音 App 主 API（评论发表、作品发布、Feed 都在这里）
-#   aweme.snssdk.com    抖音 App 老版 API 域名
-#   douyin.com          网页版（网页发作品、评论走这里）
-#
-# 如果发出的作品仍显示本地 IP，说明视频上传分片走了 douyinvod.com，
-#   取消下面那一行的注释即可；代价是刷视频也会走节点、更耗流量。
-#   另外节点 IP 太脏时抖音可能显示“IP未知”，换个干净节点再试。
+# NAME: Douyin Post & Comment (proxy)
+# 定稿版：按 Scott 旧本地规则表整理，2026-10-27
+# 用法：Egern 添加远程规则集，策略选「Douyin&Xiaohongshu IP专用」
+# 作用：只有发作品、评论走的 API 域名走代理，改 IP 就靠这几条
+# 搭配 Douyin-direct.list（策略 DIRECT，排在这组上面）使用
 
 DOMAIN-SUFFIX,amemv.com
-DOMAIN,aweme.snssdk.com
-DOMAIN-SUFFIX,douyin.com
-
-# DOMAIN-SUFFIX,douyinvod.com
+DOMAIN-SUFFIX,snssdk.com
+DOMAIN-SUFFIX,zijieapi.com
+DOMAIN-SUFFIX,toutiaocloud.com
+DOMAIN-SUFFIX,freso.com
