@@ -6,6 +6,7 @@
 # （旧表里它们走代理，是之前滤镜失败、音乐慢的原因）
 
 DOMAIN-SUFFIX,douyinvod.com
+DOMAIN-SUFFIX,zjcdn.com
 DOMAIN-SUFFIX,douyinpic.com
 DOMAIN-SUFFIX,douyinstatic.com
 DOMAIN-KEYWORD,bytecdn
