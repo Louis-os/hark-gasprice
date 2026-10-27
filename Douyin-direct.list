@@ -1,0 +1,19 @@
+# NAME: Douyin Direct Exceptions
+# 抖音直连例外：滤镜/特效模型、素材、SDK 配置走直连，不经过代理
+#
+# 用法（Egern）：
+#   添加远程规则集，URL 填本文件链接，策略选 DIRECT，
+#   并把这条规则集放在「Douyin&Xiaohongshu IP专用」等代理规则集上面
+#   （Egern 按顺序匹配，顺序反了就不生效）。
+#
+# 为什么：这些只是资源下载和配置，不决定作品/评论的 IP 属地，
+#   直连不影响改 IP，还能避免代理节点一慢就导致滤镜、音乐加载失败。
+#
+# 覆盖：
+#   byteeffecttos.com   滤镜/特效模型文件
+#   bytegecko.com      抖音素材源
+#   zijieapi.com       字节 SDK 配置、AB 测试等
+
+DOMAIN-SUFFIX,byteeffecttos.com
+DOMAIN-SUFFIX,bytegecko.com
+DOMAIN-SUFFIX,zijieapi.com
