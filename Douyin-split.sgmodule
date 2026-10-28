@@ -1,0 +1,22 @@
+# NAME: Douyin Split (proxy + direct)
+# 抖音拆分：发作品、评论走代理，其他直连
+# 用法：Egern「新增模组」，贴本文件链接即可
+# 注意：代理策略名须与 Egern 里的「Douyin&Xiaohongshu IP专用」一致
+# 若你的策略名是旧表里的「Douyin IP专用」，加完后看日志 amemv 是否走了代理
+# 没走的话说一声，改一行策略名即可
+
+[Rule]
+DOMAIN-SUFFIX,douyinvod.com,DIRECT
+DOMAIN-SUFFIX,zjcdn.com,DIRECT
+DOMAIN-SUFFIX,douyinpic.com,DIRECT
+DOMAIN-SUFFIX,douyinstatic.com,DIRECT
+DOMAIN-KEYWORD,bytecdn,DIRECT
+DOMAIN-KEYWORD,volces,DIRECT
+DOMAIN-SUFFIX,byteeffecttos.com,DIRECT
+DOMAIN-SUFFIX,bytegecko.com,DIRECT
+DOMAIN-SUFFIX,pstatp.com,DIRECT
+DOMAIN-SUFFIX,amemv.com,Douyin&Xiaohongshu IP专用
+DOMAIN-SUFFIX,snssdk.com,Douyin&Xiaohongshu IP专用
+DOMAIN-SUFFIX,zijieapi.com,Douyin&Xiaohongshu IP专用
+DOMAIN-SUFFIX,toutiaocloud.com,Douyin&Xiaohongshu IP专用
+DOMAIN-SUFFIX,freso.com,Douyin&Xiaohongshu IP专用
