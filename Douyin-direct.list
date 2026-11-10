@@ -4,6 +4,7 @@
 # 作用：视频、图片、滤镜模型、素材、音乐源全部直连，不走代理
 # 其中 byteeffecttos、bytegecko、pstatp 是从旧表代理侧改过来的
 # （旧表里它们走代理，是之前滤镜失败、音乐慢的原因）
+# 2026-11-10 补：以下 6 个 CDN 变体在 sr_proxy_list 里走代理，导致视频时好时坏，改直连
 
 DOMAIN-SUFFIX,douyinvod.com
 DOMAIN-SUFFIX,zjcdn.com
@@ -14,3 +15,9 @@ DOMAIN-KEYWORD,volces
 DOMAIN-SUFFIX,byteeffecttos.com
 DOMAIN-SUFFIX,bytegecko.com
 DOMAIN-SUFFIX,pstatp.com
+DOMAIN-SUFFIX,ibyteimg.com
+DOMAIN-SUFFIX,ibytedtos.com
+DOMAIN-SUFFIX,byteeffecttos-g.com
+DOMAIN-SUFFIX,sgpstatp.com
+DOMAIN-SUFFIX,ipstatp.com
+DOMAIN-SUFFIX,bytegecko-i18n.com
